@@ -29,6 +29,25 @@ class AirHockey extends HTMLElement{
         this.attachShadow({mode: 'open'});
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._canvas = this.shadowRoot.querySelector('canvas');
+
+        this.setGoals();
+    }
+
+    setGoals() {
+        const midHeight = this._canvas.height / 2;
+        const midGoal = DIMENSIONS.goalWidth / 2;
+        const ctx = this._canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.rect(0, midHeight - midGoal, 5, DIMENSIONS.goalWidth);
+        ctx.strokeStyle = '#ff0000';
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.rect(this._canvas.width - 5, midHeight - midGoal, 5, DIMENSIONS.goalWidth);
+        ctx.strokeStyle = '#fff000';
+        ctx.stroke();
+        ctx.closePath();
     }
 }
 
