@@ -70,6 +70,18 @@ class AirHockey extends HTMLElement{
     }
 
     moveBall() {
+        const ball = this.ball;
+        const width = this._canvas.width;
+        const height = this._canvas.height;
+
+        // limits
+        if (ball.x > this._canvas.width - ball.radius || ball.x < ball.radius) {
+            ball.speedX *= -1;
+        }
+
+        if (ball.y > this._canvas.height - ball.radius || ball.y < ball.radius) {
+            ball.speedY *= -1;
+        }
 
         this.ball.draw(this._canvas);
     }
