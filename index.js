@@ -55,6 +55,26 @@ class AirHockey extends HTMLElement{
         ctx.stroke();
         ctx.closePath();
     }
+    /**
+     * @description checks which side scored. 1 means a goal was scored to the right, -1 to the left and 0 no goal
+     * @returns {number}
+     */
+    isGoal() {
+        // goal checker
+        const ball = this.ball;
+        const width = this._canvas.width;
+        const height = this._canvas.height;
+
+        const scored = ball.x > width - ball.radius ? 1 : ball.x < ball.radius ? -1 : 0;
+        if (scored &&
+            (ball.y > -DIMENSIONS.goalWidth / 2 + height / 2 && ball.y < DIMENSIONS.goalWidth / 2 + height / 2)) {
+            alert('GOAL!!!');
+            return scored;
+        }
+
+        return 0;
+    }
+
     reset() {
         const width = this._canvas.width;
         const height = this._canvas.height;
@@ -66,6 +86,9 @@ class AirHockey extends HTMLElement{
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this.setGoals();
         this.moveBall();
+        if (this.isGoal()) {
+            this.reset();
+        }
         window.requestAnimationFrame(() => this.render());
     }
 
