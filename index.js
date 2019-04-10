@@ -33,6 +33,7 @@ class AirHockey extends HTMLElement{
         this.setGoals();
 
         this.ball = new AirHockeyBall();
+        this.setPlayers();
 
         this.reset();
 
@@ -81,11 +82,18 @@ class AirHockey extends HTMLElement{
         this.ball.x = width / 2;
         this.ball.y = height - Math.round(Math.random()*(height/2));
     }
+
+    setPlayers() {
+        this.players.right = new AirHockeyPlayer();
+        this.players.left = new AirHockeyPlayer();
+    }
+
     render() {
         const ctx = this._canvas.getContext('2d');
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         this.setGoals();
         this.moveBall();
+        this.movePlayers();
         if (this.isGoal()) {
             this.reset();
         }
@@ -107,6 +115,10 @@ class AirHockey extends HTMLElement{
         }
 
         this.ball.draw(this._canvas);
+    }
+
+    movePlayers() {
+
     }
 }
 
@@ -134,6 +146,13 @@ class AirHockeyBall {
         }
     }
 }
+
+class AirHockeyPlayer {
+    constructor(position) {
+
+    }
+}
+
 window.customElements.define('air-hockey', AirHockey);
 
 const airHockey = document.createElement('air-hockey');
