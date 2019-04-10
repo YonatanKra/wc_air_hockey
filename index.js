@@ -5,13 +5,15 @@ const DIMENSIONS = {
 };
 
 const PLAYERS_DETAILS = {
+    height: 55,
+    width: 10,
     rightPlayer: {
         color: '#ff0000',
     },
     leftPlayer: {
         color: '#fff000'
     }
-}
+};
 
 const template = document.createElement('template');
 const templateString = `
@@ -90,6 +92,15 @@ class AirHockey extends HTMLElement{
         const height = this._canvas.height;
         this.ball.x = width / 2;
         this.ball.y = height - Math.round(Math.random()*(height/2));
+
+        this.resetPlayers();
+    }
+
+    resetPlayers() {
+        const y = this._canvas.height / 2 - PLAYERS_DETAILS.height / 2;
+        this.players.right.x = this._canvas.width - 20;
+        this.players.left.x = 10;
+        this.players.right.y = this.players.left.y = y;
     }
 
     setPlayers() {
@@ -117,11 +128,14 @@ class AirHockey extends HTMLElement{
             }
         }
 
-        this.players.right = new AirHockeyPlayer(PLAYERS_DETAILS.rightPlayer.color, this._canvas.width - 15, 0, 50, 10);
+        this.players.right = new AirHockeyPlayer(PLAYERS_DETAILS.rightPlayer.color, 0, 0, 50, 10);
+        this.players.left = new AirHockeyPlayer(PLAYERS_DETAILS.leftPlayer.color, 5, 0, 50, 10);
+
+        this.resetPlayers();
+
         document.addEventListener('keydown', keyDownHandler.bind(this), false);
         document.addEventListener('keyup',  keyUpHandler.bind(this), false);
 
-        this.players.left = new AirHockeyPlayer(PLAYERS_DETAILS.leftPlayer.color, 5, 0, 50, 10);
     }
 
     render() {
