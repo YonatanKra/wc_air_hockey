@@ -34,6 +34,8 @@ class AirHockey extends HTMLElement{
 
         this.ball = new AirHockeyBall();
 
+        this.reset();
+
         this.render();
     }
 
@@ -52,6 +54,12 @@ class AirHockey extends HTMLElement{
         ctx.strokeStyle = '#fff000';
         ctx.stroke();
         ctx.closePath();
+    }
+    reset() {
+        const width = this._canvas.width;
+        const height = this._canvas.height;
+        this.ball.x = width / 2;
+        this.ball.y = height - Math.round(Math.random()*(height/2));
     }
     render() {
         const ctx = this._canvas.getContext('2d');
