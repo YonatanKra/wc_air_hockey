@@ -4,6 +4,15 @@ const DIMENSIONS = {
     goalWidth: 100
 };
 
+const PLAYERS_DETAILS = {
+    rightPlayer: {
+        color: '#ff0000',
+    },
+    leftPlayer: {
+        color: '#fff000'
+    }
+}
+
 const template = document.createElement('template');
 const templateString = `
 <style>
@@ -46,13 +55,13 @@ class AirHockey extends HTMLElement{
         const ctx = this._canvas.getContext('2d');
         ctx.beginPath();
         ctx.rect(0, midHeight - midGoal, 5, DIMENSIONS.goalWidth);
-        ctx.strokeStyle = '#ff0000';
+        ctx.strokeStyle = PLAYERS_DETAILS.leftPlayer.color;
         ctx.stroke();
         ctx.closePath();
 
         ctx.beginPath();
         ctx.rect(this._canvas.width - 5, midHeight - midGoal, 5, DIMENSIONS.goalWidth);
-        ctx.strokeStyle = '#fff000';
+        ctx.strokeStyle = PLAYERS_DETAILS.rightPlayer.color;
         ctx.stroke();
         ctx.closePath();
     }
@@ -84,8 +93,35 @@ class AirHockey extends HTMLElement{
     }
 
     setPlayers() {
-        this.players.right = new AirHockeyPlayer();
-        this.players.left = new AirHockeyPlayer();
+        function keyDownHandler(e) {
+            if (e.key == 'Down' || e.key == 'ArrowDown') {
+                this.players.right.directionY = 1;
+            } else if (e.key == 'Up' || e.key == 'ArrowUp') {
+                this.players.right.directionY = -1;
+            }
+
+            if (e.key === 's') {
+                this.players.left.directionY = 1;
+            } else if (e.key === 'w') {
+                this.players.left.directionY = -1;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.key == 'Down' || e.key == 'ArrowDown' || e.key == 'Up' || e.key == 'ArrowUp') {
+                this.players.right.directionY = 0;
+            }
+
+            if (e.key === 'w' || e.key === 's') {
+                this.players.left.directionY = 0;
+            }
+        }
+
+        this.players.right = new AirHockeyPlayer(PLAYERS_DETAILS.rightPlayer.color, this._canvas.width - 15, 0, 50, 10);
+        document.addEventListener('keydown', keyDownHandler.bind(this), false);
+        document.addEventListener('keyup',  keyUpHandler.bind(this), false);
+
+        this.players.left = new AirHockeyPlayer(PLAYERS_DETAILS.leftPlayer.color, 5, 0, 50, 10);
     }
 
     render() {
@@ -118,7 +154,8 @@ class AirHockey extends HTMLElement{
     }
 
     movePlayers() {
-
+        this.players.left.draw(this._canvas);
+        this.players.right.draw(this._canvas);
     }
 }
 
@@ -148,8 +185,26 @@ class AirHockeyBall {
 }
 
 class AirHockeyPlayer {
-    constructor(position) {
+    constructor(color, x, y, height, width) {
+        this.color = color ? color : 'red';
+        this.x = x ? x : 0;
+        this.y = y ? y : 0;
+        this.height = Number.isFinite(height) ? height : 50;
+        this.width = Number.isFinite(width) ? width : 10;
+        this.directionY = 0;
+        this.speedY = 2;
+    }
 
+    draw(canvas) {
+
+        this.y += this.directionY * this.speedY;
+
+        const ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
     }
 }
 
