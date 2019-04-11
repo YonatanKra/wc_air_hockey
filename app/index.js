@@ -1,17 +1,7 @@
-const http = require('http');
-const port = 3000;
+const port = process.env.PORT || 3000;
+const express = require('express');
+const app = express();
 
-const requestHandler = (request, response) => {
-    console.log(request.url);
-    response.end('Hello Node.js Server!')
-};
-
-const server = http.createServer(requestHandler);
-
-server.listen(port, (err) => {
-    if (err) {
-        return console.log('something bad happened', err)
-    }
-
-    console.log(`server is listening on ${port}`)
-});
+app.use(express.static('public'));
+app.use('/socket.js', express.static('node_modules/socket.io-client/dist/socket.io.js'));
+app.listen(port);
