@@ -102,6 +102,7 @@ class AirHockey extends HTMLElement {
         this.players.right.x = this._canvas.width - 20;
         this.players.left.x = 10;
         this.players.right.y = this.players.left.y = y;
+        this.players.left.height = this.players.right.height = PLAYERS_DETAILS.height;
     }
 
     setPlayers() {
@@ -164,7 +165,7 @@ class AirHockey extends HTMLElement {
             testY = player.y;
         } else if (ball.y > player.y + player.height) {
             testY = player.y + player.height;
-        }   // right edge
+        }
 
         let distX = ball.x - testX;
         let distY = ball.y - testY;
