@@ -173,6 +173,18 @@ class AirHockey extends HTMLElement {
         return distance <= ball.radius;
     }
 
+
+    ballWallCollisionCheck(ball) {
+        // limits
+        if (ball.x > this._canvas.width - ball.radius || ball.x < ball.radius) {
+            ball.speedX *= -1;
+        }
+
+        if (ball.y > this._canvas.height - ball.radius || ball.y < ball.radius) {
+            ball.speedY *= -1;
+        }
+    }
+
     moveBall() {
         const ball = this.ball;
         let collide = false;
@@ -185,14 +197,7 @@ class AirHockey extends HTMLElement {
         }
 
         if (!collide) {
-            // limits
-            if (ball.x > this._canvas.width - ball.radius || ball.x < ball.radius) {
-                ball.speedX *= -1;
-            }
-
-            if (ball.y > this._canvas.height - ball.radius || ball.y < ball.radius) {
-                ball.speedY *= -1;
-            }
+            this.ballWallCollisionCheck(this.ball);
         }
 
         this.ball.draw(this._canvas);
