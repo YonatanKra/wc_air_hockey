@@ -1,3 +1,8 @@
+import {SocketConnection} from "./socket.connection.js";
+
+const socketConnection = new SocketConnection();
+socketConnection.createAGame('test');
+
 const DIMENSIONS = {
     height: 400,
     width: 550,
@@ -26,7 +31,7 @@ const templateString = `
 `;
 template.innerHTML = templateString;
 
-class AirHockey extends HTMLElement {
+export class AirHockey extends HTMLElement {
     _canvas;
     ball;
     players = {
@@ -176,7 +181,7 @@ class AirHockey extends HTMLElement {
     playerWallCollisionCheck(player) {
         // limits
         if ((player.y + player.height > this._canvas.height && player.directionY >= 0) ||
-            (player.directionY < 0 && player.y <= 0 )) {
+            (player.directionY < 0 && player.y <= 0)) {
             player.directionY = 0;
         }
     }
