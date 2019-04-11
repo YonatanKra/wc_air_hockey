@@ -26,7 +26,7 @@ const templateString = `
 `;
 template.innerHTML = templateString;
 
-class AirHockey extends HTMLElement{
+class AirHockey extends HTMLElement {
     _canvas;
     ball;
     players = {
@@ -67,6 +67,7 @@ class AirHockey extends HTMLElement{
         ctx.stroke();
         ctx.closePath();
     }
+
     /**
      * @description checks which side scored. 1 means a goal was scored to the right, -1 to the left and 0 no goal
      * @returns {number}
@@ -91,7 +92,7 @@ class AirHockey extends HTMLElement{
         const width = this._canvas.width;
         const height = this._canvas.height;
         this.ball.x = width / 2;
-        this.ball.y = height - Math.round(Math.random()*(height/2));
+        this.ball.y = height - Math.round(Math.random() * (height / 2));
 
         this.resetPlayers();
     }
@@ -134,7 +135,7 @@ class AirHockey extends HTMLElement{
         this.resetPlayers();
 
         document.addEventListener('keydown', keyDownHandler.bind(this), false);
-        document.addEventListener('keyup',  keyUpHandler.bind(this), false);
+        document.addEventListener('keyup', keyUpHandler.bind(this), false);
 
     }
 
@@ -150,18 +151,48 @@ class AirHockey extends HTMLElement{
         window.requestAnimationFrame(() => this.render());
     }
 
+    playerBallCollisionCheck(ball, player) {
+        let testX = ball.x;
+        let testY = ball.y;
+
+        if (ball.x < player.x) {
+            testX = player.x;
+        } else if (ball.x > player.x + player.width) {
+            testX = player.x + player.width;
+        }
+        if (ball.y < player.y) {
+            testY = player.y;
+        } else if (ball.y > player.y + player.height) {
+            testY = player.y + player.height;
+        }   // right edge
+
+        let distX = ball.x - testX;
+        let distY = ball.y - testY;
+        let distance = Math.sqrt((distX * distX) + (distY * distY));
+
+        return distance <= ball.radius;
+    }
+
     moveBall() {
         const ball = this.ball;
-        const width = this._canvas.width;
-        const height = this._canvas.height;
+        let collide = false;
 
-        // limits
-        if (ball.x > this._canvas.width - ball.radius || ball.x < ball.radius) {
+        // collision with a players
+        if (this.playerBallCollisionCheck(this.ball, this.players.left) ||
+            this.playerBallCollisionCheck(this.ball, this.players.right)) {
             ball.speedX *= -1;
+            collide = true;
         }
 
-        if (ball.y > this._canvas.height - ball.radius || ball.y < ball.radius) {
-            ball.speedY *= -1;
+        if (!collide) {
+            // limits
+            if (ball.x > this._canvas.width - ball.radius || ball.x < ball.radius) {
+                ball.speedX *= -1;
+            }
+
+            if (ball.y > this._canvas.height - ball.radius || ball.y < ball.radius) {
+                ball.speedY *= -1;
+            }
         }
 
         this.ball.draw(this._canvas);
