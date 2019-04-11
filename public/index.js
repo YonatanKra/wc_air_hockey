@@ -1,7 +1,12 @@
 import {SocketConnection} from "./socket.connection.js";
 
 const socketConnection = new SocketConnection();
-socketConnection.createAGame('test');
+const promises = [socketConnection.createAGame('test'),
+                    socketConnection.createAGame('test2')];
+Promise.all(promises).then(res => {
+   socketConnection.getGames().then(console.log);
+});
+
 
 const DIMENSIONS = {
     height: 400,
