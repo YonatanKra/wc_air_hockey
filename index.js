@@ -107,9 +107,9 @@ class AirHockey extends HTMLElement {
 
     setPlayers() {
         function keyDownHandler(e) {
-            if (e.key == 'Down' || e.key == 'ArrowDown') {
+            if (e.key === 'Down' || e.key === 'ArrowDown') {
                 this.players.right.directionY = 1;
-            } else if (e.key == 'Up' || e.key == 'ArrowUp') {
+            } else if (e.key === 'Up' || e.key === 'ArrowUp') {
                 this.players.right.directionY = -1;
             }
 
@@ -121,7 +121,7 @@ class AirHockey extends HTMLElement {
         }
 
         function keyUpHandler(e) {
-            if (e.key == 'Down' || e.key == 'ArrowDown' || e.key == 'Up' || e.key == 'ArrowUp') {
+            if (e.key === 'Down' || e.key === 'ArrowDown' || e.key === 'Up' || e.key === 'ArrowUp') {
                 this.players.right.directionY = 0;
             }
 
@@ -137,7 +137,6 @@ class AirHockey extends HTMLElement {
 
         document.addEventListener('keydown', keyDownHandler.bind(this), false);
         document.addEventListener('keyup', keyUpHandler.bind(this), false);
-
     }
 
     render() {
@@ -152,7 +151,7 @@ class AirHockey extends HTMLElement {
         window.requestAnimationFrame(() => this.render());
     }
 
-    playerBallCollisionCheck(ball, player) {
+    static playerBallCollisionCheck(ball, player) {
         let testX = ball.x;
         let testY = ball.y;
 
@@ -198,8 +197,8 @@ class AirHockey extends HTMLElement {
         let collide = false;
 
         // collision with a players
-        if (this.playerBallCollisionCheck(this.ball, this.players.left) ||
-            this.playerBallCollisionCheck(this.ball, this.players.right)) {
+        if (AirHockey.playerBallCollisionCheck(this.ball, this.players.left) ||
+            AirHockey.playerBallCollisionCheck(this.ball, this.players.right)) {
             ball.speedX *= -1;
             collide = true;
         }
