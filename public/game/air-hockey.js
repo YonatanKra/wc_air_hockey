@@ -1,6 +1,7 @@
 import {AirHockeyBall} from "./air-hockey-ball.js";
 import {AirHockeyPlayer} from "./air-hockey-player.js";
 import {DIMENSIONS, PLAYERS_DETAILS} from "./consts.js";
+import {PlayerAI} from "./player-ai.js";
 
 const template = document.createElement('template');
 const templateString = `
@@ -27,15 +28,21 @@ export class AirHockey extends HTMLElement {
         this.attachShadow({mode: 'open'});
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._canvas = this.shadowRoot.querySelector('canvas');
+        this._canvas.setAttribute('tabindex', 1);
 
         this.setGoals();
 
         this.ball = new AirHockeyBall();
+
         this.setPlayers();
 
         this.reset();
 
         this.render();
+    }
+
+    setOpponentHandler(opponentHandler) {
+        this.opponentHandler = opponentHandler ? opponentHandler : new PlayerAI(this.ball, this.players.left, this._canvas);
     }
 
     setGoals() {
@@ -99,21 +106,11 @@ export class AirHockey extends HTMLElement {
             } else if (e.key === 'Up' || e.key === 'ArrowUp') {
                 this.players.right.directionY = -1;
             }
-
-            if (e.key === 's') {
-                this.players.left.directionY = 1;
-            } else if (e.key === 'w') {
-                this.players.left.directionY = -1;
-            }
         }
 
         function keyUpHandler(e) {
             if (e.key === 'Down' || e.key === 'ArrowDown' || e.key === 'Up' || e.key === 'ArrowUp') {
                 this.players.right.directionY = 0;
-            }
-
-            if (e.key === 'w' || e.key === 's') {
-                this.players.left.directionY = 0;
             }
         }
 
@@ -122,8 +119,8 @@ export class AirHockey extends HTMLElement {
 
         this.resetPlayers();
 
-        document.addEventListener('keydown', keyDownHandler.bind(this), false);
-        document.addEventListener('keyup', keyUpHandler.bind(this), false);
+        this._canvas.addEventListener('keydown', keyDownHandler.bind(this), false);
+        this._canvas.addEventListener('keyup', keyUpHandler.bind(this), false);
     }
 
     render() {
@@ -160,12 +157,20 @@ export class AirHockey extends HTMLElement {
         return distance <= ball.radius;
     }
 
+    /**
+     * @description checks if player's position is at the top or bottom.
+     * @param player <AirHockeyPlayer>
+     * @returns {number} - 0 no, 1 bottom, -1 top
+     */
     playerWallCollisionCheck(player) {
         // limits
         if ((player.y + player.height > this._canvas.height && player.directionY >= 0) ||
             (player.directionY < 0 && player.y <= 0)) {
             player.directionY = 0;
+            return player.y + player.height > this._canvas.height ? -1 : 1;
         }
+
+        return 0;
     }
 
     ballWallCollisionCheck(ball) {
@@ -198,8 +203,11 @@ export class AirHockey extends HTMLElement {
     }
 
     movePlayers() {
-        this.playerWallCollisionCheck(this.players.left);
+
         this.playerWallCollisionCheck(this.players.right);
+        if (this.opponentHandler) {
+            this.opponentHandler.move(this.playerWallCollisionCheck(this.players.left));
+        }
         this.players.left.draw(this._canvas);
         this.players.right.draw(this._canvas);
     }
